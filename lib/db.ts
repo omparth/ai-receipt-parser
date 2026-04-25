@@ -1,4 +1,3 @@
-//lib/db.ts
 import Database from 'better-sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -93,12 +92,10 @@ export function saveReceipt(receipt: Receipt, items: ReceiptItem[], confidenceSc
 
     const receiptId = result.lastInsertRowid as number;
 
-    // Insert items
     for (const item of items) {
       insertItem.run(receiptId, item.description, item.quantity, item.unitPrice, item.totalPrice);
     }
 
-    // Insert confidence scores
     for (const score of confidenceScores) {
       insertConfidence.run(receiptId, score.fieldName, score.confidenceScore, score.itemId || null);
     }
