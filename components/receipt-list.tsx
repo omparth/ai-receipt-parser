@@ -1,4 +1,3 @@
-//components/receipt-list.stx
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -111,7 +110,6 @@ export function ReceiptList({ refreshTrigger }: ReceiptListProps) {
           <Card key={receipt.id} className="p-4 hover:bg-accent transition-colors">
           <div className="flex items-start justify-between gap-4">
         
-            {/* CLICKABLE AREA */}
             <Link href={`/receipts/${receipt.id}`} className="flex-1 min-w-0 block">
               <div>
                 <h3 className="font-semibold truncate">
@@ -124,7 +122,6 @@ export function ReceiptList({ refreshTrigger }: ReceiptListProps) {
               </div>
             </Link>
         
-            {/* DELETE BUTTON (IMPORTANT: outside Link) */}
             <div className="flex items-center gap-2">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
