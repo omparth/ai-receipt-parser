@@ -1,12 +1,10 @@
-//app/api/upload/route.ts
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { saveReceipt, initializeDb } from '@/lib/db';
 import type { ConfidenceScore } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import { extractReceiptData } from "@/lib/openai"; // top pe
+import { extractReceiptData } from "@/lib/openai"; 
 
-// Initialize database on module load
 initializeDb();
 
 type ReceiptItem = {
@@ -20,7 +18,7 @@ type ItemWithConfidence = ReceiptItem & {
   _confidenceMap: Record<string, number>;
 };
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
 
 function generateFilename(): string {
@@ -38,7 +36,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Validate file type
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
         { error: 'Invalid file type. Only JPEG and PNG images are allowed.' },
@@ -46,34 +43,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json({ error: 'File size exceeds 10MB limit' }, { status: 400 });
     }
 
-    // Create uploads directory if it doesn't exist
     const uploadsDir = join(process.cwd(), 'public', 'uploads');
     mkdirSync(uploadsDir, { recursive: true });
 
 
     
-    // Save file
     const filename = generateFilename();
     const filepath = join(uploadsDir, filename);
     const buffer = Buffer.from(await file.arrayBuffer());
     writeFileSync(filepath, buffer);
 
-    // Convert to base64 for OpenAI
-
-    // Extract data using OpenAI
+    
 
    
 
 
-// after buffer create
 const base64Image = buffer.toString("base64");
 
-// 🔥 ACTUAL EXTRACTION (OCR + LLM)
 const extractionResult = await extractReceiptData(base64Image);
 
 
@@ -111,9 +101,7 @@ if (!data.items || data.items.length === 0) {
   ];
 }
  
-    // confidence ab empty rakh sakte ho
     const confidence: Record<string, number> = {};
-    // Prepare confidence scores for database
     const confidenceScores: ConfidenceScore[] = [];
     for (const [fieldName, score] of Object.entries(confidence)) {
       if (!fieldName.startsWith('item_')) {
@@ -124,7 +112,6 @@ if (!data.items || data.items.length === 0) {
       }
     }
 
-    // Prepare items with item-level confidence
     const items: ItemWithConfidence[] = data.items.map((item: ReceiptItem, index: number) => ({
       
   ...item,
@@ -138,7 +125,6 @@ if (!data.items || data.items.length === 0) {
 
 
     console.log("🔥 SAVING TO DB:", data);
-    // Save to database
     const receiptId = saveReceipt(
       {
         filename,
@@ -157,9 +143,7 @@ if (!data.items || data.items.length === 0) {
     );
     console.log("🔥 SAVED ID:", receiptId);
 
-    // Add item-level confidence scores
     items.forEach((item: any, index: number) => {      const itemData = data.items[index];
-      // Store item confidence in the database via additional inserts
       for (const [fieldName, score] of Object.entries(item._confidenceMap)) {
         confidenceScores.push({
           fieldName: `item_${index}_${fieldName}`,
