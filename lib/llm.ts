@@ -1,7 +1,6 @@
-//lib/llm.ts
 export async function parseWithLLM(text: string) {
   try {
-    const shortText = text.slice(0, 700); // 🔥 aur reduce kar diya
+    const shortText = text.slice(0, 700); 
 
     const prompt = `
 Return ONLY valid JSON.
@@ -31,7 +30,7 @@ ${shortText}
     const res = await fetch("http://localhost:11434/api/generate", {
       method: "POST",
       body: JSON.stringify({
-        model: "llama3:8b", // 🔥 IMPORTANT CHANGE
+        model: "llama3:8b", 
         prompt,
         stream: false,
         keep_alive: "10m"
@@ -47,7 +46,6 @@ ${shortText}
     ?.replace(/```/g, "")
     ?.trim();
   
-  // 🔥 extract only JSON part
   const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
   
   if (!jsonMatch) {
