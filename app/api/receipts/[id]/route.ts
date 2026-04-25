@@ -1,4 +1,3 @@
-//app/api/receipts/[id]/route.ts
 import { getReceipt, updateReceipt, deleteReceipt, saveEdit, updateReceiptItem, initializeDb } from '@/lib/db';
 import { unlinkSync } from 'fs';
 import { join } from 'path';
@@ -48,7 +47,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const body = await request.json();
 
-    // Update receipt fields
     const updates: Record<string, any> = {};
 
     if (body.vendor !== undefined && body.vendor !== receipt.vendor) {
@@ -81,7 +79,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       updates.total = body.total;
     }
 
-    // Update receipt items if provided
     if (body.items && Array.isArray(body.items)) {
       body.items.forEach((updatedItem: any, index: number) => {
         const originalItem = receipt.items[index];
@@ -139,7 +136,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ error: 'Receipt not found' }, { status: 404 });
     }
 
-    // Delete associated image file
     try {
       const filepath = join(process.cwd(), 'public', 'uploads', receipt.filename);
             unlinkSync(filepath);
@@ -147,7 +143,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       console.warn('[Delete Receipt] Could not delete image file:', fileError);
     }
 
-    // Delete from database (cascades to items, confidence, edits)
     deleteReceipt(id);
 
     return NextResponse.json({
