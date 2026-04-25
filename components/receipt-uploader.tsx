@@ -1,4 +1,3 @@
-//components/receipt-uploader.tsx
 'use client';
 import { useState, useRef } from 'react';
 import { Upload, Loader2, AlertCircle } from 'lucide-react';
@@ -33,7 +32,6 @@ export function ReceiptUploader({ onSuccess, onError }: ReceiptUploaderProps) {
   const processFile = async (file: File) => {
     setError(null);
 
-    // ✅ validate type
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
       const msg = 'Please upload JPEG or PNG image';
       setError(msg);
@@ -41,7 +39,6 @@ export function ReceiptUploader({ onSuccess, onError }: ReceiptUploaderProps) {
       return;
     }
 
-    // ✅ validate size
     if (file.size > 10 * 1024 * 1024) {
       const msg = 'File size must be less than 10MB';
       setError(msg);
@@ -49,7 +46,6 @@ export function ReceiptUploader({ onSuccess, onError }: ReceiptUploaderProps) {
       return;
     }
 
-    // preview
     const reader = new FileReader();
     reader.onload = (e) => setPreview(e.target?.result as string);
     reader.readAsDataURL(file);
@@ -57,7 +53,6 @@ export function ReceiptUploader({ onSuccess, onError }: ReceiptUploaderProps) {
     setIsLoading(true);
 
     try {
-      // 🔥 ONLY SEND FILE (NO OCR HERE)
       const formData = new FormData();
       formData.append('file', file);
 
