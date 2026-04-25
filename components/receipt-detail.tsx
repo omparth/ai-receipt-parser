@@ -1,4 +1,3 @@
-//components/receipt-detail.tsx
 'use client';
 import { useState } from 'react';
 import { AlertCircle, Check, X, Loader2, Edit2, Save } from 'lucide-react';
